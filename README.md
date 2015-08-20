@@ -30,7 +30,3 @@ Pipya also requires a free Wunderground API key located in a file called api.key
 	how did you get your name?
 
 	who are you?
-
-=======
-personal assistant, in python. pronounced, pip-pah, it is designed to be a jack-of-all-trades partner-in-crime sitting in a terminal window.
->>>>>>> 16420af6c7498b07049a6a7e7a378897d52e25b2
