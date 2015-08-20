@@ -10,6 +10,8 @@ Full license in LICENCE.txt
 
 from datetime import datetime
 import feedparser
+from urllib.request import urlopen
+import json
 
 class bcolors:
     HEADER = '\033[95m'
@@ -22,16 +24,39 @@ class bcolors:
     UNDERLINE = '\033[4m'
 
 def todaysdate():
-	return datetime.now()
+  return datetime.now()
 
 def grab(link):
-	return feedparser.parse(link)
+  return feedparser.parse(link)
 
 def template():
-	print("""
+  print("""
 
 """)
-	return None
+  return None
+
+def cfgwriter(inputs,lineno,text):
+  """Writes to given config file"""
+  tmp = str(inputs+".tmp")
+  with open(inputs) as fin, open(tmp,'w') as fout:
+    count = 0
+    for line in fin:
+      if count == lineno:
+        fout.write(text+"\n")
+      else:
+        fout.write(line)
+      count += 1
+  with open(tmp) as fin, open(inputs,'w') as fout:
+    for line in fin:
+      fout.write(line)
+  return None
+
+def wloader(typeofdata):
+  f = urlopen(typeofdata)
+  json_string = f.read()
+  json_middleman = json_string.decode("utf-8")
+  parsed_json = json.loads(json_middleman)
+  return parsed_json
 
 #TEXT TEXT TEXT TEXT TEXT
 
@@ -39,22 +64,64 @@ def pipya():
   return bcolors.HEADER + "Pipya: " + bcolors.ENDC
 
 def welcome(user):
-	print(pipya() + bcolors.OKBLUE + """\
+  print(pipya() + bcolors.OKBLUE + """\
 Hi {0}! It's {1}. What can I do for you?
+Don't forget, you can always ask me what I can do.
+My keywords are 'fetch' and 'set'
 """.format(user, todaysdate()) + bcolors.ENDC)
-	return None
+  return None
 
 def ask():
-	ask = pipya() + bcolors.OKBLUE + "What's up? " + bcolors.ENDC
-	return ask
+  ask = pipya() + bcolors.OKBLUE + "What's up? " + bcolors.ENDC
+  return ask
 
 def rt(thing):
-	print(pipya() + bcolors.OKBLUE +\
-		 "Here's what you asked for: {0}!".format(thing) +\
-		 bcolors.ENDC)
+  print(pipya() + bcolors.OKBLUE +\
+     "Here's what you asked for: {0}!".format(thing) +\
+     bcolors.ENDC)
+  return None
+
+def capabilities():
+  print(pipya() + bcolors.OKBLUE +"""\
+\n-Here's what I can do:
+-interpret (to a certain degree) plain-english commands
+-fetch news headlines from NPR and the Atlantic
+-fetch the weather
+"""
++ bcolors.ENDC)
+  return None
+
+def wcurre(parsed_json):
+  print(pipya() + bcolors.OKBLUE +\
+                "Weather in " +\
+                parsed_json["location"]["city"] +\
+                " now: " +\
+                parsed_json["current_observation"]["weather"]+ " at " +\
+                parsed_json["current_observation"]["temperature_string"] +\
+                bcolors.ENDC)
+  return None
+
+def wforec(parsed_json):
+  print(pipya() + bcolors.OKBLUE +\
+                  "Weather in " +\
+                  parsed_json["location"]["city"] +\
+                  " soon:\n" +\
+                  parsed_json["forecast"]["txt_forecast"]["forecastday"][1]["title"]+\
+                  "- " +\
+                  parsed_json["forecast"]["txt_forecast"]["forecastday"][1]["fcttext"]+\
+                  "\n" +\
+                  parsed_json["forecast"]["txt_forecast"]["forecastday"][2]["title"]+\
+                  "- " +\
+                  parsed_json["forecast"]["txt_forecast"]["forecastday"][2]["fcttext"]+\
+                  "\n" +\
+                  parsed_json["forecast"]["txt_forecast"]["forecastday"][4]["title"]+\
+                  "- " +\
+                  parsed_json["forecast"]["txt_forecast"]["forecastday"][4]["fcttext"]+\
+                  bcolors.ENDC)
+  return None
 
 def jellyfish():
-	print("""
+  print("""
                 
                                         (hello!)
                                       .'
@@ -78,4 +145,4 @@ def jellyfish():
 
                     unknown artist
                 """)
-	return "jellyfish"
+  return "jellyfish"

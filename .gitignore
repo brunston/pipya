@@ -1,4 +1,6 @@
 settings.cfg
+api.key
+settings.cfg.tmp
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

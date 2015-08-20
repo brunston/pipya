@@ -12,10 +12,9 @@ Full license in LICENCE.txt
 #Let's make sure that the user has all the dependencies installed and that
 #they are running the correct version of Python
 import sys
-#import configparser
 import time
 import feedparser
-
+import json
 import helper as h
 
 toggle = True
@@ -29,15 +28,21 @@ Please upgrade to Python3, preferably 3.4.* or greater, before continuing""")
 def main():
     with open("settings.cfg") as file:
         config = [line.rstrip('\n') for line in file]
+    with open("api.key") as file:
+        wlist = [line.rstrip('\n') for line in file]
+    wapi = wlist[0]
     user = config[0]
+    citystr = config[1]
     h.welcome(user)
 
     while True:
         with open("settings.cfg") as file:
             config = [line.rstrip('\n') for line in file]
         user = config[0]
+        citystr = config[1]
         uin = str.lower(input(h.ask()))
         if "fetch" in uin:
+
             if "headlines" in uin:
                 if "npr" in uin:
                     h.rt(uin)
@@ -62,6 +67,28 @@ def main():
                               h.bcolors.ENDC)
                         print("Time Published ",newsfeed.entries[i].published)
 
+            elif "weather" in uin:
+                currentcond = str('http://api.wunderground.com/api/'+wapi+\
+                            '/geolookup/conditions/q/'+citystr+'.json')
+                parsed_json = h.wloader(currentcond)
+                h.wcurre(parsed_json)
+
+                currentforec = str('http://api.wunderground.com/api/'+wapi+\
+                            '/geolookup/forecast/q/'+citystr+'.json')
+                parsed_json = h.wloader(currentforec)
+                h.wforec(parsed_json)
+
+        elif "set" in uin:
+            if "name" in uin:
+                name = input("What would you like me to call you? ")
+                h.cfgwriter("settings.cfg",0,name)
+
+            if "city" in uin:
+                city = input("""
+Changing weather location? Where to?
+Must be in Wunderground form. """)
+                h.cfgwriter("settings.cfg",1,city)
+
         elif "name" and "pronounce" in uin:
             print(h.pipya()+"My name is pronounced Pip-pah. The y is silent :).")
 
@@ -69,6 +96,17 @@ def main():
             print(h.pipya()+"""\
 My name started as pypa, for "python personal assistant". It morphed to pipya
 for pronounceability. Thanks for asking!""")
+
+        elif "what" and "can" and "do" in uin:
+            h.capabilities()
+
+        elif "who" and "are" and ("you" or "pipya") in uin:
+            print(h.pipya()+"""
+I am Pipya, a personal assistant written in python3. My creator is brupoon.
+He intended for me to be a jack-of-all-trades personal assistant operated by
+a cli. I am a sexless, genderless entity, though my name is similar to the
+human feminine "Pippa".
+                """)
 
         elif uin in ["q", "quit", "exit", "goodbye"]:
             print("Goodbye, {0}! 'Till next time.".format(user))
