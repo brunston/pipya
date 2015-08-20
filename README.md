@@ -1,5 +1,5 @@
 # pipya
-<<<<<<< HEAD
+
 Pipya is a personal assistant written in python.
 Pronounced pip-pah, it is designed to be a jack-of-all-trades
 partner-in-crime that sits in a terminal window.
@@ -13,6 +13,8 @@ partner-in-crime that sits in a terminal window.
 
 ## Dependencies:
 Pipya requires feedparser and ANSI.sys (for colors) support in Windows.
+
+Pipya also requires a free Wunderground API key located in a file called api.key in the main directory
 
 ## Example commands:
 	please fetch me the weather
