@@ -10,6 +10,9 @@ partner-in-crime that sits in a terminal window.
 
 -fetch the weather
 
+## Dependencies:
+Pipya requires feedparser and ANSI.sys (for colors) support in Windows.
+
 ## Example commands:
 	please fetch me the weather
 
@@ -24,3 +27,4 @@ partner-in-crime that sits in a terminal window.
 	how did you get your name?
 
 	who are you?
+
