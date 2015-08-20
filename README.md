@@ -1,4 +1,5 @@
 # pipya
+<<<<<<< HEAD
 Pipya is a personal assistant written in python.
 Pronounced pip-pah, it is designed to be a jack-of-all-trades
 partner-in-crime that sits in a terminal window.
@@ -28,3 +29,6 @@ Pipya requires feedparser and ANSI.sys (for colors) support in Windows.
 
 	who are you?
 
+=======
+personal assistant, in python. pronounced, pip-pah, it is designed to be a jack-of-all-trades partner-in-crime sitting in a terminal window.
+>>>>>>> 16420af6c7498b07049a6a7e7a378897d52e25b2
