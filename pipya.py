@@ -11,9 +11,14 @@ Full license in LICENCE.txt
 #IMPORT IMPORT IMPORT IMPORT IMPORT IMPORT IMPORT IMPORT IMPORT IMPORT IMPORT
 #Let's make sure that the user has all the dependencies installed and that
 #they are running the correct version of Python
-import sys
+try:
+    import feedparser
+except ImportError:
+    print("feedparser is a system-agnostic dependency for RSS support")
+    sys.exit()
+
+import sys, os
 import time
-import feedparser
 import json
 import helper as h
 
@@ -24,6 +29,14 @@ if version != 3:
 Please upgrade to Python3, preferably 3.4.* or greater, before continuing""")
     toggle = False
     sys.exit()
+
+if os.name == "nt":
+    try:
+        from colorama import init
+        init()
+    except ImportError:
+        print("colorama is a windows dependency for ANSI colors support")
+        sys.exit()
 
 def main():
     with open("settings.cfg") as file:
@@ -40,9 +53,9 @@ def main():
             config = [line.rstrip('\n') for line in file]
         user = config[0]
         citystr = config[1]
-        uin = str.lower(input(h.ask()))
+        print(h.ask())
+        uin = str.lower(input(">"))
         if "fetch" in uin:
-
             if "headlines" in uin:
                 if "npr" in uin:
                     h.rt(uin)
@@ -108,7 +121,7 @@ a cli. I am a sexless, genderless entity, though my name is similar to the
 human feminine "Pippa".
                 """)
 
-        elif uin in ["q", "quit", "exit", "goodbye"]:
+        elif ["quit", "exit", "goodbye"] in uin:
             print("Goodbye, {0}! 'Till next time.".format(user))
             sys.exit()
 

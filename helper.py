@@ -9,9 +9,18 @@ Full license in LICENCE.txt
 """
 
 from datetime import datetime
-import feedparser
 from urllib.request import urlopen
 import json
+import os, sys
+import feedparser
+
+if os.name == "nt":
+    try:
+        from colorama import init
+        init()
+    except ImportError:
+        print("colorama is a windows dependency for ANSI colors support")
+        sys.exit()
 
 class bcolors:
     HEADER = '\033[95m'
