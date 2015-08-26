@@ -13,6 +13,7 @@ from urllib.request import urlopen
 import json
 import os, sys
 import feedparser
+import webbrowser
 
 if os.name == "nt":
     try:
@@ -32,6 +33,17 @@ class bcolors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+def kernfig():
+  with open("settings.cfg") as file:
+    config = [line.rstrip('\n') for line in file]
+    with open("api.key") as file:
+      wlist = [line.rstrip('\n') for line in file]
+  wapi = wlist[0]
+  user = config[0]
+  citystr = config[1]
+  newslink = config[2]
+  return (wapi,user,citystr,newslink)
+
 def todaysdate():
   return datetime.now()
 
@@ -45,7 +57,7 @@ def template():
   return None
 
 def cfgwriter(inputs,lineno,text):
-  """Writes to given config file"""
+  """Writes text to given config file in inputs on line lineno"""
   tmp = str(inputs+".tmp")
   with open(inputs) as fin, open(tmp,'w') as fout:
     count = 0
@@ -66,6 +78,9 @@ def wloader(typeofdata):
   json_middleman = json_string.decode("utf-8")
   parsed_json = json.loads(json_middleman)
   return parsed_json
+
+def giveComputerIndex(uin):
+  return [int(s) for s in uin.split() if s.isdigit()]
 
 #TEXT TEXT TEXT TEXT TEXT
 

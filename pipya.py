@@ -20,7 +20,9 @@ except ImportError:
 import sys, os
 import time
 import json
+import webbrowser
 import helper as h
+import fetch as fetch
 
 toggle = True
 version = sys.version_info[0]
@@ -39,63 +41,25 @@ if os.name == "nt":
         sys.exit()
 
 def main():
-    with open("settings.cfg") as file:
-        config = [line.rstrip('\n') for line in file]
-    with open("api.key") as file:
-        wlist = [line.rstrip('\n') for line in file]
-    wapi = wlist[0]
-    user = config[0]
-    citystr = config[1]
+    wapi, user, citystr,newslink = h.kernfig()
     h.welcome(user)
 
     while True:
-        with open("settings.cfg") as file:
-            config = [line.rstrip('\n') for line in file]
-        user = config[0]
-        citystr = config[1]
+        wapi, user, citystr,newslink = h.kernfig()
         print(h.ask())
         uin = str.lower(input(">"))
         if "fetch" in uin:
-            if "headlines" in uin:
-                if "npr" in uin:
-                    h.rt(uin)
-                    newsfeed = h.grab("http://www.npr.org/rss/rss.php?id=1001")
-                    for i in range(10):
-                        print(h.bcolors.BOLD + newsfeed.entries[i].title +\
-                              h.bcolors.ENDC)
-                        print("Time Published ",newsfeed.entries[i].published)
-                elif "atlantic" in uin:
-                    h.rt(uin)
-                    newsfeed = h.grab(\
-                    "http://feeds.feedburner.com/TheAtlantic?format=xml")
-                    for i in range(10):
-                        print(h.bcolors.BOLD + newsfeed.entries[i].title +\
-                              h.bcolors.ENDC)
-                        print("Time Published: ",newsfeed.entries[i].published)
-                else:
-                    print(h.pipya() + "Defaulting to NPR!")
-                    newsfeed = h.grab("http://www.npr.org/rss/rss.php?id=1001")
-                    for i in range(10):
-                        print(h.bcolors.BOLD + newsfeed.entries[i].title +\
-                              h.bcolors.ENDC)
-                        print("Time Published ",newsfeed.entries[i].published)
-
-            elif "weather" in uin:
-                currentcond = str('http://api.wunderground.com/api/'+wapi+\
-                            '/geolookup/conditions/q/'+citystr+'.json')
-                parsed_json = h.wloader(currentcond)
-                h.wcurre(parsed_json)
-
-                currentforec = str('http://api.wunderground.com/api/'+wapi+\
-                            '/geolookup/forecast/q/'+citystr+'.json')
-                parsed_json = h.wloader(currentforec)
-                h.wforec(parsed_json)
+            fetch.main(uin)
+            
+        elif "visit" in uin:
+            for itemToVisit in h.giveComputerIndex(uin):
+                newsfeed = h.grab(newslink)
+                webbrowser.open(newsfeed.entries[itemToVisit-1].link)
 
         elif "set" in uin:
             if "name" in uin:
                 name = input("What would you like me to call you? ")
                 h.cfgwriter("settings.cfg",0,name)
-
             if "city" in uin:
                 city = input("""
 Changing weather location? Where to?
@@ -121,7 +85,7 @@ a cli. I am a sexless, genderless entity, though my name is similar to the
 human feminine "Pippa".
                 """)
 
-        elif ["quit", "exit", "goodbye"] in uin:
+        elif uin in ["quit", "goodbye", "exit"]:
             print("Goodbye, {0}! 'Till next time.".format(user))
             sys.exit()
 
